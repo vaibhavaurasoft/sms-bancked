@@ -24,19 +24,19 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // super admin
-app.use("/api/v1", School);
-app.use("/api/v1", addadmin);
+app.use("/", School);
+app.use("/", addadmin);
 
 // admin
-app.use("/api/v1", addTeacher);
+app.use("/", addTeacher);
 
 // teacher
-app.use("/api/v1", addstudent);
+app.use("/", addstudent);
 
 // calling apis
-app.use("/api/v1", User);
+app.use("/", User);
 
-app.get("/api/v1",(req,res)=>{
+app.get("/",(req,res)=>{
     res.status(200).json({sucess :  "data is working properly"})
 })
 
