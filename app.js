@@ -36,6 +36,10 @@ app.use("/api/v1", addstudent);
 // calling apis
 app.use("/api/v1", User);
 
+app.get("/api/v1",(req,res)=>{
+    res.status(200).json({sucess :  "data is working properly"})
+})
+
 // middelwear for error
 app.use(Error);
 
