@@ -17,7 +17,7 @@ router
   .post(
     auth.isAuthenticateUser,
     auth.authorizeRole("superadmin"),
-    Schooldata.schoolWithClient
+    Schooldata.AddSchool
   );
 
 router

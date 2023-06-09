@@ -7,15 +7,24 @@ const checkPostBody = require("../../utils/QueryCheck");
 
 // create user
 const AddUser = TryCatch(async (req, res, next) => {
+
+
+
+
     const role = req.user.role;
     if (role === "admin") {
      return await checkPostBody(["email", "password"], req);
     } else if (role === "teacher") {
      return await checkPostBody(["email", "password"], req);
     }
-    else if (!role) {
-      await User.create(req.body);
-    }
+    
+
+
+
+
+
+
+
   // const exist = req.user.role;
   // if (exist === "superadmin") {
   //   var user = await User.create(req.body);
@@ -24,7 +33,7 @@ const AddUser = TryCatch(async (req, res, next) => {
   //   req.body.schoolId = req.user.schoolId;
   //   var user = await User.create(req.body);
   // }
-
+  // const user = await User.create(req.body)
   res.status(201).json({
     success: true,
     user,

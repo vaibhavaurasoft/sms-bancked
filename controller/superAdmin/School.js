@@ -6,7 +6,7 @@ const  User = require("../../model/User/User");
 const checkPostBody = require("../../utils/QueryCheck")
 
 // crate school
-const AddSchool = TryCatch(async (req, res) => {
+const AddSchool2 = TryCatch(async (req, res) => {
   const {
     ownername,
     ownerimage,
@@ -143,7 +143,7 @@ const DeleteSchool = TryCatch(async (req, res, next) => {
 });
 
 // testing
-const schoolWithClient = TryCatch(async (req, res, next) => {
+const AddSchool = TryCatch(async (req, res, next) => {
   await checkPostBody(["schoolName", "ownerName", "ownerEmail", "password"],req)
   const {schoolName,ownerName,ownerEmail,password} =  req.body;
 
@@ -157,7 +157,6 @@ const schoolWithClient = TryCatch(async (req, res, next) => {
     schoolId:school._id
   })
   res.json({sucess: "Accound created succesfull",school,Admin})
-  console.log(school._id)
 
 })
 module.exports = {
@@ -166,5 +165,4 @@ module.exports = {
   SchoolDetails,
   UpdateSchoolDetails,
   DeleteSchool,
-  schoolWithClient
 };
