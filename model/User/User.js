@@ -23,6 +23,11 @@ const Users = new mongoose.Schema({
     type: String,
     default: "student",
   },
+  schoolId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Schools",
+    // required: true
+  },
   address: {
     type: String,
   },
@@ -53,11 +58,6 @@ const Users = new mongoose.Schema({
   CreateByuser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-  },
-  schoolId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Schools",
-    required: true
   },
   createdAt: {
     type: Date,
@@ -147,7 +147,7 @@ const Users = new mongoose.Schema({
   },
 });
 
-
+ 
 // password hashing
 Users.pre("save", async function (next) {
   if (!this.isModified("password")) {

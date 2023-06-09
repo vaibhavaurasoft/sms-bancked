@@ -51,7 +51,7 @@ const RegisterSchool = new mongoose.Schema({
   ],
   principalemail: {
     type: String,
-    required: [true, "Please enter Principal email id"],
+    // required: [true, "Please enter Principal email id"],
   },
   principalphonenumber: {
     type: Number,
@@ -77,7 +77,7 @@ const RegisterSchool = new mongoose.Schema({
   ],
   contectpersonemail: {
     type: String,
-    validate: [validator.isEmail, "Please enter a valid contect person email"],
+    // validate: [validator.isEmail, "Please enter a valid contect person email"],
   },
   contectpersonphonenumber: {
     type: Number,
@@ -88,7 +88,7 @@ const RegisterSchool = new mongoose.Schema({
   // School Details
   schoolname: {
     type: String,
-    required: [true, "Please enter School Name"],
+    // required: [true, "Please enter School Name"],
   },
   schoollogo: [
     {
@@ -115,31 +115,31 @@ const RegisterSchool = new mongoose.Schema({
   schoolemail: {
     type: String,
     validate: [validator.isEmail, "Please enter a school valid email"],
-    required: [true, "Please enter contectperson email id"],
+    // required: [true, "Please enter contectperson email id"],
   },
   city: {
     type: String,
-    required: [true, "Please enter City Name"],
+    // required: [true, "Please enter City Name"],
   },
   address: {
     type: String,
-    required: [true, "Please enter Address"],
+    // required: [true, "Please enter Address"],
   },
   schoolId: {
     type: Number,
-    required: [true, "Please enter School Id"],
+    // required: [true, "Please enter School Id"],
   },
   entrollmentYear: {
     type: Number,
-    required: [true, "Please enter School Entrollment Year"],
+    // required: [true, "Please enter School Entrollment Year"],
   },
   schooltype: {
     type: String,
-    required: [true, "Please enter School Type"],
+    // required: [true, "Please enter School Type"],
   },
   bordtype: {
     type: String,
-    required: [true, "Please enter bord Type"],
+    // required: [true, "Please enter bord Type"],
   },
 
   schoolwebsite: {

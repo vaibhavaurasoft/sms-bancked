@@ -2,6 +2,8 @@ const TryCatch = require("../../middelwear/TryCatch");
 const School = require("../../model/SuperAdmin/SchoolSchema");
 const ErrorHandler = require("../../utils/errorHandel");
 const ApiFeatures = require("../../utils/apifeature");
+const  User = require("../../model/User/User");
+const checkPostBody = require("../../utils/QueryCheck")
 
 // crate school
 const AddSchool = TryCatch(async (req, res) => {
@@ -95,7 +97,7 @@ const AllSchool = TryCatch(async (req, res, next) => {
 });
 
 // get school by id
-const SchoolDetails = TryCatch(async (req, res , next) => {
+const SchoolDetails = TryCatch(async (req, res, next) => {
   const { schoolId } = req.params;
   if (!schoolId) {
     return new ErrorHandler("please provid SchoolId", 400);
@@ -138,17 +140,31 @@ const DeleteSchool = TryCatch(async (req, res, next) => {
     return res.json({ error: "No School Avalible with this id" });
   }
   res.json({ sucess: "succes details delete succesfull", school });
-  
+});
+
+// testing
+const schoolWithClient = TryCatch(async (req, res, next) => {
+  await checkPostBody(["schoolName", "ownerName", "ownerEmail", "password"],req)
+  const {schoolName,ownerName,ownerEmail,password} =  req.body;
+
+  const school = await School.create({schoolname : schoolName
+  })
+  const Admin = await User.create({
+    name: ownerName,
+    email: ownerEmail,
+    role:"admin",
+    password,
+    schoolId:school._id
+  })
+  res.json({sucess: "Accound created succesfull",school,Admin})
+  console.log(school._id)
+
 })
-
-
-
-
-
 module.exports = {
   AddSchool,
   AllSchool,
   SchoolDetails,
   UpdateSchoolDetails,
   DeleteSchool,
+  schoolWithClient
 };

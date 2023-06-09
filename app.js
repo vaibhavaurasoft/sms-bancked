@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const Error = require("./middelwear/error");
 // parse
 const cookieParser = require("cookie-parser");
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
 // super admin
 app.use("/", School);
 app.use("/", addadmin);
@@ -42,5 +44,7 @@ app.get("/",(req,res)=>{
 
 // middelwear for error
 app.use(Error);
+app.use(cors());
+
 
 module.exports = app;

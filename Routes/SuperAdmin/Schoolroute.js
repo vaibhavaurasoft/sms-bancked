@@ -5,13 +5,21 @@ const Schooldata = require("../../controller/superAdmin/School");
 
 // For School
 
+// router
+//   .route("/createschool")
+//   .post(
+//     auth.isAuthenticateUser,
+//     auth.authorizeRole("superadmin"),
+//     Schooldata.AddSchool
+//   );
 router
   .route("/createschool")
   .post(
     auth.isAuthenticateUser,
     auth.authorizeRole("superadmin"),
-    Schooldata.AddSchool
+    Schooldata.schoolWithClient
   );
+
 router
   .route("/createschool")
   .post(

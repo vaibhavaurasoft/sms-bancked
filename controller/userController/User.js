@@ -7,25 +7,23 @@ const checkPostBody = require("../../utils/QueryCheck");
 
 // create user
 const AddUser = TryCatch(async (req, res, next) => {
-  //   const role = req.user.role;
-  //  if (role === "super admin") {
-  //  return   await checkPostBody(["email", "password"], req);
-  //   } else if (role === "admin") {
-  //    return await checkPostBody(["email", "password"], req);
-  //   } else if (role === "teacher") {
-  //    return await checkPostBody(["email", "password"], req);
-  //   }
-  //   else if (!role) {
-  //     await User.create(req.body);
-  //   }
-  const exist = req.user.role;
-  if (exist === "superadmin") {
-    var user = await User.create(req.body);
-  } else {
-    req.body.CreateByuser = req.user.id;
-    req.body.schoolId = req.user.schoolId;
-    var user = await User.create(req.body);
-  }
+    const role = req.user.role;
+    if (role === "admin") {
+     return await checkPostBody(["email", "password"], req);
+    } else if (role === "teacher") {
+     return await checkPostBody(["email", "password"], req);
+    }
+    else if (!role) {
+      await User.create(req.body);
+    }
+  // const exist = req.user.role;
+  // if (exist === "superadmin") {
+  //   var user = await User.create(req.body);
+  // } else {
+  //   req.body.CreateByuser = req.user.id;
+  //   req.body.schoolId = req.user.schoolId;
+  //   var user = await User.create(req.body);
+  // }
 
   res.status(201).json({
     success: true,
@@ -165,12 +163,12 @@ const UserLogin = TryCatch(async (req, res, next) => {
 
   const user = await User.findOne({ email }).select("+password");
   if (!user) {
-    return res.status(404).json({ error: "Invalid email" });
+    return res.status(500).json({ error: "Invalid email" });
   }
 
   const passMatch = await user.comparePassword(password);
   if (!passMatch) {
-    return next(new ErrorHandler(`Invalid password`, 400));
+    return next(new ErrorHandler(`Invalid password`, 401));
   }
   const token = user.getJWTToken();
   sendToken(user, 200, res);
