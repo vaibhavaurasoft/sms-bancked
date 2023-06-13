@@ -71,7 +71,7 @@ const AddSchool2 = TryCatch(async (req, res) => {
     totalteacher: totalteacher || 50,
   });
 
-  res.json({ success: "School added successfully", school: newSchool });
+  res.json({ message: "School added successfully", school: newSchool });
 });
 
 // Get All school
@@ -144,19 +144,18 @@ const DeleteSchool = TryCatch(async (req, res, next) => {
 
 // testing
 const AddSchool = TryCatch(async (req, res, next) => {
-  await checkPostBody(["schoolName", "ownerName", "ownerEmail", "password"],req)
-  const {schoolName,ownerName,ownerEmail,password} =  req.body;
+  await checkPostBody(["schoolname", "name", "email", "password"], req);
+  const {schoolname,email,name,password} =  req.body;
 
-  const school = await School.create({schoolname : schoolName
-  })
+  const school = await School.create({schoolname})
   const Admin = await User.create({
-    name: ownerName,
-    email: ownerEmail,
+    name,
+    email,
     role:"admin",
     password,
     schoolId:school._id
   })
-  res.json({sucess: "Accound created succesfull",school,Admin})
+  res.json({message: "Accound created succesfull",school,Admin})
 
 })
 module.exports = {

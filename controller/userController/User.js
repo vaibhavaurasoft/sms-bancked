@@ -2,38 +2,20 @@ const TryCatch = require("../../middelwear/TryCatch");
 const User = require("../../model/User/User");
 const ErrorHandler = require("../../utils/errorHandel");
 const sendToken = require("../../utils/jwtToken");
-const ApiFeatures = require("../../utils/apifeature");
 const checkPostBody = require("../../utils/QueryCheck");
 
 // create user
 const AddUser = TryCatch(async (req, res, next) => {
-
-
-
-
-    const role = req.user.role;
-    if (role === "admin") {
-     return await checkPostBody(["email", "password"], req);
-    } else if (role === "teacher") {
-     return await checkPostBody(["email", "password"], req);
-    }
-    
-
-
-
-
-
-
-
-  // const exist = req.user.role;
-  // if (exist === "superadmin") {
-  //   var user = await User.create(req.body);
-  // } else {
-  //   req.body.CreateByuser = req.user.id;
-  //   req.body.schoolId = req.user.schoolId;
-  //   var user = await User.create(req.body);
-  // }
-  // const user = await User.create(req.body)
+  
+  const role = req.user.role;
+  if (role === "admin") {
+   await checkPostBody(["email", "password"], req);
+  }else if (role === "teacher") {
+    await checkPostBody(["email","password"], req);
+  }
+  req.body.CreateByuser = req.user.id;
+  req.body.schoolId = req.user.schoolId; 
+  const user = await User.create(req.body);
   res.status(201).json({
     success: true,
     user,
@@ -43,7 +25,6 @@ const AddUser = TryCatch(async (req, res, next) => {
 // get user by id
 const UserbyId = TryCatch(async (req, res, next) => {
   const user = await User.findById(req.params.id);
-  // const user2 = await Admin.findById(req.params.id);
   if (!user) {
     return next(new ErrorHandler("user not found", 404));
   }
@@ -173,11 +154,15 @@ const UserLogin = TryCatch(async (req, res, next) => {
   const user = await User.findOne({ email }).select("+password");
   if (!user) {
     return res.status(500).json({ error: "Invalid email" });
+    // return next(new ErrorHandler(`Invalid email`, 401));
+
   }
 
   const passMatch = await user.comparePassword(password);
   if (!passMatch) {
-    return next(new ErrorHandler(`Invalid password`, 401));
+    // return next(new ErrorHandler(`Invalid password`, 401));
+    return res.status(500).json({ error: "Invalid Password" });
+
   }
   const token = user.getJWTToken();
   sendToken(user, 200, res);
@@ -199,7 +184,6 @@ const UserDetails = TryCatch(async (req, res, next) => {
 });
 
 // honme page
-
 
 module.exports = {
   AddUser,
