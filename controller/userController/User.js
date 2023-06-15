@@ -6,15 +6,14 @@ const checkPostBody = require("../../utils/QueryCheck");
 
 // create user
 const AddUser = TryCatch(async (req, res, next) => {
-  
   const role = req.user.role;
   if (role === "admin") {
-   await checkPostBody(["email", "password"], req);
-  }else if (role === "teacher") {
-    await checkPostBody(["email","password"], req);
+    await checkPostBody(["email", "password"], req);
+  } else if (role === "teacher") {
+    await checkPostBody(["email", "password"], req);
   }
   req.body.CreateByuser = req.user.id;
-  req.body.schoolId = req.user.schoolId; 
+  req.body.schoolId = req.user.schoolId;
   const user = await User.create(req.body);
   res.status(201).json({
     success: true,
@@ -144,7 +143,7 @@ const DeleteUser = TryCatch(async (req, res, next) => {
   res.json({ sucess: "succes details delete succesfull", user });
 });
 
-// login user
+// // 2 login user
 const UserLogin = TryCatch(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -155,17 +154,18 @@ const UserLogin = TryCatch(async (req, res, next) => {
   if (!user) {
     return res.status(500).json({ error: "Invalid email" });
     // return next(new ErrorHandler(`Invalid email`, 401));
-
   }
 
   const passMatch = await user.comparePassword(password);
   if (!passMatch) {
     // return next(new ErrorHandler(`Invalid password`, 401));
     return res.status(500).json({ error: "Invalid Password" });
-
   }
-  const token = user.getJWTToken();
+
+  // const token = user.getJWTToken();
   sendToken(user, 200, res);
+  // sendToken(user);
+
 });
 
 // logout user
@@ -183,7 +183,12 @@ const UserDetails = TryCatch(async (req, res, next) => {
   });
 });
 
-// honme page
+// roe detectore
+const RoleCheck = TryCatch(async(req,res,next)=>{
+   const user = await User.findById(req.user.id);
+   res.status(200).json({user:user.role})
+})
+
 
 module.exports = {
   AddUser,
@@ -194,4 +199,5 @@ module.exports = {
   LogOut,
   UserDetails,
   UserbyId,
+  RoleCheck
 };
