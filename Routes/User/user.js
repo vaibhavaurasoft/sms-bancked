@@ -26,6 +26,6 @@ router
 router.route("/me").get(auth.isAuthenticateUser, User.UserDetails);
 
 // role check
-router.route("/role").get(auth.isAuthenticateUser,User.RoleCheck)
+// router.route("/role").get(auth.isAuthenticateUser,User.RoleCheck)
 
 module.exports = router;

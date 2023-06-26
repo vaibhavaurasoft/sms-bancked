@@ -22,8 +22,11 @@ const RegisterSchool = new mongoose.Schema({
   ],
   owneremail: {
     type: String,
+    unique: true,
     validate: [validator.isEmail, "Please enter a valid email"],
   },
+
+
   SchoolregistaionId: {
     type: Number,
     validate: [validator.isEmail, "Please enter a valid SchoolregistaionId"],
@@ -41,11 +44,11 @@ const RegisterSchool = new mongoose.Schema({
     {
       public_id: {
         type: String,
-        required: true,
+        // required: true,
       },
       url: {
         type: String,
-        required: true,
+        // required: true,
       },
     },
   ],

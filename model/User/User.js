@@ -25,8 +25,40 @@ const Users = new mongoose.Schema({
   },
   schoolId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Schools",
+    ref: "schools",
     // required: true
+  },
+  classId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "classes",
+  },
+  paidFees: {
+    type: Number,
+  },
+  feesinstall1:{
+    type: Number,
+  },
+  feesinstall2:{
+    type: Number,
+
+  },
+  feesinstall3:{
+    type: Number,
+
+  },
+  image: {
+    data: {
+      type: String,
+      // required: true,
+    },
+    contentType: {
+      type: String,
+      // required: true,
+    },
+  },
+  classId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "classes",
   },
   address: {
     type: String,
@@ -76,9 +108,7 @@ const Users = new mongoose.Schema({
   //   type: String,
   //   default: "indian",
   // },
-  image: {
-    type: String,
-  },
+
   // studentID: {
   //   type: String,
   //   unique: true,
@@ -147,7 +177,6 @@ const Users = new mongoose.Schema({
   },
 });
 
- 
 // password hashing
 Users.pre("save", async function (next) {
   if (!this.isModified("password")) {
@@ -157,13 +186,11 @@ Users.pre("save", async function (next) {
 });
 
 //  JWT token
- Users.methods.getJWTToken = function () {
+Users.methods.getJWTToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
-  }); 
+  });
 };
-
-
 
 // compare password
 Users.methods.comparePassword = async function (enterpassword) {

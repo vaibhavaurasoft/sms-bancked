@@ -36,7 +36,7 @@ router
   );
 router
   .route("/schooldetails/:schoolId")
-  .post(
+  .get(
     auth.isAuthenticateUser,
     auth.authorizeRole("superadmin"),
     Schooldata.SchoolDetails

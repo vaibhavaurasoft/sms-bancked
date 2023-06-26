@@ -23,7 +23,7 @@ router
   .get(
     auth.isAuthenticateUser,
     auth.authorizeRole("superadmin"),
-    Data.UserDetails
+    Data.UserbyId
   );
 
 // update admin

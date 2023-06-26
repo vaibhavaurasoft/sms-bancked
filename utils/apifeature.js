@@ -15,8 +15,8 @@ class ApiFeatures {
             $regex: this.queryStr.role,
             $options: "i",
           },
-          studentname: {
-            $regex: this.queryStr.studentname,
+          name: {
+            $regex: this.queryStr.name,
             $options: "i",
           },
         }

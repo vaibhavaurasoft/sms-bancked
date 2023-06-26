@@ -1,8 +1,11 @@
+const { isAuthenticateUser } = require("../../middelwear/Auth");
 const TryCatch = require("../../middelwear/TryCatch");
 const User = require("../../model/User/User");
 const ErrorHandler = require("../../utils/errorHandel");
 const sendToken = require("../../utils/jwtToken");
 const checkPostBody = require("../../utils/QueryCheck");
+const Fee = require("../../model/admin/Fee");
+const Userclass = require("../../model/SchoolClass/Schoolclass");
 
 // create user
 const AddUser = TryCatch(async (req, res, next) => {
@@ -10,7 +13,7 @@ const AddUser = TryCatch(async (req, res, next) => {
   if (role === "admin") {
     await checkPostBody(["email", "password"], req);
   } else if (role === "teacher") {
-    await checkPostBody(["email", "password"], req);
+    await checkPostBody(["email", "password", "classId","name"], req);
   }
   req.body.CreateByuser = req.user.id;
   req.body.schoolId = req.user.schoolId;
@@ -22,17 +25,50 @@ const AddUser = TryCatch(async (req, res, next) => {
 });
 
 // get user by id
+// const UserbyId1 = TryCatch(async (req, res, next) => {
+//   const user = await User.findById(req.params.id);
+//   if (!user) {
+//     return next(new ErrorHandler("user not found", 404));
+//   }
+//   res.status(200).json({
+//     success: true,
+//     user,
+//   });
+// });
+
+
 const UserbyId = TryCatch(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const { id } = req.params;
+  const user = await User.findById(id);
   if (!user) {
     return next(new ErrorHandler("user not found", 404));
   }
+  // finding class
+  const classid = user.classId;
+  const classfind = await Userclass.findOne(classid);
+
+  // finding fee
+  const schoolId = req.user.schoolId;
+  const classFees = await Fee.findOne({ schoolId, classId: classid });
+  
+  const totalFess = classFees.fees
+  const totalpaidfee =
+    user.feesinstall1 + user.feesinstall2 + user.feesinstall3;
+
+
+  const remingfees =  totalFess - totalpaidfee
+  const alldata = {
+    ...user.toObject(),
+    classs : classfind.className,
+    allfess : totalFess,
+    pandingFee : remingfees
+  };
   res.status(200).json({
     success: true,
-    user,
-    user2,
-  });
-});
+    alldata,
+  }); 
+}); 
+
 
 // get all use
 const AllUser = TryCatch(async (req, res) => {
@@ -40,6 +76,8 @@ const AllUser = TryCatch(async (req, res) => {
   if (req.user.role == "superadmin") {
     const query = req.query;
     const data = await User.find(query);
+
+
     const totalUser = data.length;
     res.status(200).json({ totalUser: totalUser, data });
   }
@@ -96,52 +134,100 @@ const AllUser = TryCatch(async (req, res) => {
 });
 
 // update user
-const UpdateUser = TryCatch(async (req, res, next) => {
-  const { userId } = req.params;
-  const { studentdata, teacherdata } = req.body;
-  if (!userId) {
-    return res.json({ error: "please provid userId" });
-  }
+
+// const UpdateUser = TryCatch(async (req, res, next) => {
+//   const { userId } = req.params;
+//   const { studentdata, teacherdata } = req.body;
+//   if (!userId) {
+//     return res.json({ error: "please provide userId" });
+//   }
+//   var existingUser = await User.findById(userId);
+//   if (!existingUser) {
+//     return res.json({ error: "No User Available with this id" });
+//   }
+//   if (
+//     req.user.role == "superadmin" ||
+//     req.user.role == "admin" ||
+//     req.user.role == "principal"
+//   ) {
+//     var updatedUser = await User.findByIdAndUpdate(userId, req.body, {
+//       new: true,
+//     });
+//     res.json({
+//       success: "successfully updated user details",
+//       user: updatedUser,
+//     });
+//   } else if (req.user.role == "teacher" || req.user.role == "student") {
+//     var updatedUser = await User.findByIdAndUpdate(
+//       userId,
+//       { studentdata, teacherdata },
+//       {
+//         new: true,
+//       }
+//     );
+//     res.json({
+//       success: "successfully updated user details",
+//       user: updatedUser,
+//     });
+//   } else {
+//     return res.json({ error: "you are not allowed to update this user" });
+//   }
+// });
+
+const UpdateUser = TryCatch(async(req,res)=>{
+const userId = req.params.id;
+var user = await User.findById(userId)  
+ if (!user) {
+   return next(new ErrorHandler("User not found", 404));
+ }
+  var user = await User.findByIdAndUpdate(
+    userId,
+    {$set:req.body},
+    {new:true}
+  )
+ res.status(200).json({
+   success: true,
+   message: "Fees updated successfully",
+   user
+ });
+
+
+})
+
+
+const DeleteUser = TryCatch(async (req, res) => {
+  const userId = req.params.id;
   var user = await User.findById(userId);
   if (!user) {
-    return res.json({ error: "No User Avalible with this id" });
+    return next(new ErrorHandler("User not found", 404));
   }
-  if (
-    req.user.role == "superadmin" ||
-    req.user.role == "admin" ||
-    req.user.role == "principal"
-  ) {
-    var user = await User.findByIdAndUpdate(userId, req.body, {
-      new: true,
-    });
-    res.json({ sucess: "succes details update succesfull", user });
-  } else if (req.user.role == "teacher" || req.user.role == "student") {
-    var user = await User.findByIdAndUpdate(
-      userId,
-      { studentdata, teacherdata },
-      {
-        new: true,
-      }
-    );
-    res.json({ sucess: "succes details update succesfull", user });
-  } else {
-    return res.json({ error: "you are not allowed to update this user" });
-  }
+  var user = await User.findByIdAndDelete(
+    userId,
+  );
+  res.status(200).json({
+    success: true,
+    message: "Fees delete successfully",
+    user,
+  });
 });
 
+
+
+
+
 // delete user
-const DeleteUser = TryCatch(async (req, res, next) => {
-  const { userId } = req.params;
-  if (!userId) {
-    return res.json({ error: "please provid userId" });
-  }
-  var user = await User.findById(userId);
-  if (!user) {
-    return res.json({ error: "No User Avalible with this id" });
-  }
-  var user = await User.findByIdAndDelete(userId);
-  res.json({ sucess: "succes details delete succesfull", user });
-});
+// const DeleteUser = TryCatch(async (req, res, next) => {
+//   const { userId } = req.params;
+//   if (!userId) {
+//     return res.json({ error: "please provid userId" });
+//   }
+//   var user = await User.findById(userId);
+//   if (!user) {
+//     return res.json({ error: "No User Avalible with this id" });
+//   }
+//   var user = await User.findByIdAndDelete(userId);
+//   res.json({ sucess: "succes details delete succesfull", user });
+// });
 
 // // 2 login user
 const UserLogin = TryCatch(async (req, res, next) => {
@@ -165,7 +251,6 @@ const UserLogin = TryCatch(async (req, res, next) => {
   // const token = user.getJWTToken();
   sendToken(user, 200, res);
   // sendToken(user);
-
 });
 
 // logout user
@@ -184,11 +269,10 @@ const UserDetails = TryCatch(async (req, res, next) => {
 });
 
 // roe detectore
-const RoleCheck = TryCatch(async(req,res,next)=>{
-   const user = await User.findById(req.user.id);
-   res.status(200).json({user:user.role})
-})
-
+// const RoleCheck = TryCatch(async(req,res,next)=>{
+//    const user = await User.findById(req.user.id);
+//    res.status(200).json({user:user.role})
+// })
 
 module.exports = {
   AddUser,
@@ -199,5 +283,4 @@ module.exports = {
   LogOut,
   UserDetails,
   UserbyId,
-  RoleCheck
 };

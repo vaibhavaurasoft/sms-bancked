@@ -8,7 +8,7 @@ router
   .route("/createstudent")
   .post(
     auth.isAuthenticateUser,
-    auth.authorizeRole("teacher"),
+    auth.authorizeRole("teacher","admin","superadmin"),
     Data.AddUser
   );
 
@@ -23,7 +23,7 @@ router.route("/allstudent").get(
 router.route("/singlestudent/:id").get(
     auth.isAuthenticateUser,
     auth.authorizeRole("teacher"),
-    Data.UserDetails
+    Data.UserbyId
 )
 
 // update student

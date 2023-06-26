@@ -20,7 +20,7 @@ router.route("/allteacher").get(
 router.route("/singleteacher/:id").get(
     auth.isAuthenticateUser,
     auth.authorizeRole("admin"),
-    Data.UserDetails
+    Data.UserbyId
 )
 
 // update teacher
