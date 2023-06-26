@@ -263,7 +263,7 @@ const SchoolDetails = TryCatch(async (req, res, next) => {
     totalAdmin,
     totalUser,
     totalclass : totalClass,
-    fees,
+    classes:fees,
     exams
   };
 

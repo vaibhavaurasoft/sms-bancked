@@ -113,6 +113,20 @@ const MyExam = TryCatch(async (req, res) => {
   res.json({ exams });
 });
 
+
+// schoolExam
+const MySchoolsExam = TryCatch(async (req, res) => {
+  const schoolId = req.user.schoolId;
+
+  //   const schoolId = req.user.schoolId;
+  const searchQuery = {
+    schoolId,
+  };
+  const exams = await SchoolExame.find(searchQuery);
+  res.json({ exams });
+});
+
+
 module.exports = {
   createExam,
   getAllExamsByClass,
@@ -120,5 +134,6 @@ module.exports = {
   updateExamById,
   deleteExamById,
   ALLSchoolExam,
-  MyExam
+  MyExam,
+  MySchoolsExam,
 };

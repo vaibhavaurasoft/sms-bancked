@@ -23,6 +23,9 @@ router
 router
   .route("/myexam")
   .get(auth.isAuthenticateUser, ExamController.MyExam);
+  router
+  .route("/myschoolexam")
+  .get(auth.isAuthenticateUser,auth.authorizeRole("admin","teacher") ,ExamController.MySchoolsExam);
 
 
 module.exports = router;

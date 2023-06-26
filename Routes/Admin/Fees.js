@@ -25,6 +25,10 @@ router
   .route("/myfees")
   .get(
     auth.isAuthenticateUser,
+    auth.authorizeRole("student"),
     Data.MyFees
   );
+  router
+    .route("/myschoolfees")
+    .get(auth.isAuthenticateUser, auth.authorizeRole("admin","teacher"), Data.MySchholFees);
 module.exports = router;

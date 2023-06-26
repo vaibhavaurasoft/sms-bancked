@@ -78,6 +78,8 @@ const UserbyId = TryCatch(async (req, res, next) => {
 }); 
 
 
+
+
 // const UserbyId1 = TryCatch(async (req, res, next) => {
 //   const { id } = req.params;
 //   const user = await User.findById(id);
