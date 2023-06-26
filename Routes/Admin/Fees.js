@@ -21,5 +21,10 @@ router
 router
   .route("/updatefee")
   .put(auth.isAuthenticateUser, auth.authorizeRole("admin"), Data.UpdateFees);
-
+router
+  .route("/myfees")
+  .get(
+    auth.isAuthenticateUser,
+    Data.MyFees
+  );
 module.exports = router;

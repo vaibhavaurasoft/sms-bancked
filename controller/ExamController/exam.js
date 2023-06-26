@@ -1,10 +1,9 @@
 const SchoolExame = require("../../model/ExamSchema/exammodel");
 const TryCatch = require("../../middelwear/TryCatch");
 
-const moment = require("moment");
 
 
-// // Create a new exam
+ // Create a new exam
 const createExam = TryCatch(async (req, res) => {
   req.body.schoolId = req.user.schoolId;
   req.body.createdBy = req.user.id;
@@ -99,6 +98,21 @@ const deleteExamById = TryCatch(async (req, res) => {
   }
 });
 
+// myexam 
+const MyExam = TryCatch(async (req, res) => {
+  
+  const schoolId = req.user.schoolId;
+  const classId = req.user.classId;
+
+  //   const schoolId = req.user.schoolId;
+  const searchQuery = {
+    schoolId,
+    classId,
+  };
+  const exams = await SchoolExame.find(searchQuery);
+  res.json({ exams });
+});
+
 module.exports = {
   createExam,
   getAllExamsByClass,
@@ -106,4 +120,5 @@ module.exports = {
   updateExamById,
   deleteExamById,
   ALLSchoolExam,
+  MyExam
 };

@@ -38,7 +38,7 @@ router
   .route("/schooldetails/:schoolId")
   .get(
     auth.isAuthenticateUser,
-    auth.authorizeRole("superadmin"),
+    auth.authorizeRole("superadmin",'admin'),
     Schooldata.SchoolDetails
   );
 router

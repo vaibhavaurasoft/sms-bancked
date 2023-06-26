@@ -35,16 +35,17 @@ const Users = new mongoose.Schema({
   paidFees: {
     type: Number,
   },
-  feesinstall1:{
+  feesinstall1: {
     type: Number,
+    default: 0,
   },
-  feesinstall2:{
+  feesinstall2: {
     type: Number,
-
+    default: 0,
   },
-  feesinstall3:{
+  feesinstall3: {
     type: Number,
-
+    default: 0,
   },
   image: {
     data: {

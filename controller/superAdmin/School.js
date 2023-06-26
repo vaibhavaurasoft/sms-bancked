@@ -6,7 +6,7 @@ const User = require("../../model/User/User");
 const checkPostBody = require("../../utils/QueryCheck");
 const SchoolClass = require("../../model/SchoolClass/Schoolclass")
 const Fee = require("../../model/admin/Fee")
-
+const SchoolExame = require("../../model/ExamSchema/exammodel")
 
 // crate school
 const AddSchool2 = TryCatch(async (req, res) => {
@@ -226,9 +226,16 @@ const SchoolDetails = TryCatch(async (req, res, next) => {
     return new ErrorHandler("No School Available with this id", 400);
   }
 
+  // finding Exam
+  const exams = await SchoolExame.find({schoolId});
+
+  // finding total fees 
   const fees = await Fee.find({schoolId})
 
+  // finding total class
   const totalClass = await Fee.countDocuments({ schoolId });
+
+  // finding totoal user
   const totalTeacher = await User.countDocuments({
     schoolId: schooldetails._id,
     role: "teacher",
@@ -256,7 +263,8 @@ const SchoolDetails = TryCatch(async (req, res, next) => {
     totalAdmin,
     totalUser,
     totalclass : totalClass,
-    fees
+    fees,
+    exams
   };
 
   res.json({ success: "School details fetched successfully", School: schoolWithCounts });

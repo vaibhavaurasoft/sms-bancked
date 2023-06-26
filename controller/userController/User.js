@@ -6,6 +6,7 @@ const sendToken = require("../../utils/jwtToken");
 const checkPostBody = require("../../utils/QueryCheck");
 const Fee = require("../../model/admin/Fee");
 const Userclass = require("../../model/SchoolClass/Schoolclass");
+const SchoolExam = require("../../model/ExamSchema/exammodel")
 
 // create user
 const AddUser = TryCatch(async (req, res, next) => {
@@ -36,7 +37,6 @@ const AddUser = TryCatch(async (req, res, next) => {
 //   });
 // });
 
-
 const UserbyId = TryCatch(async (req, res, next) => {
   const { id } = req.params;
   const user = await User.findById(id);
@@ -44,30 +44,125 @@ const UserbyId = TryCatch(async (req, res, next) => {
     return next(new ErrorHandler("user not found", 404));
   }
   // finding class
-  const classid = user.classId;
+  const classid = await user.classId;
   const classfind = await Userclass.findOne(classid);
 
   // finding fee
-  const schoolId = req.user.schoolId;
+  const schoolId = await user.schoolId;
   const classFees = await Fee.findOne({ schoolId, classId: classid });
-  
-  const totalFess = classFees.fees
+  const totalFess = classFees.fees;
   const totalpaidfee =
     user.feesinstall1 + user.feesinstall2 + user.feesinstall3;
 
+  const remingfees = totalFess - totalpaidfee;
 
-  const remingfees =  totalFess - totalpaidfee
+// finding exam 
+ const searchQuery = {
+   schoolId,
+   classId: classid,
+ };
+  const exams = await SchoolExam.find(searchQuery);
+
+
   const alldata = {
     ...user.toObject(),
-    classs : classfind.className,
-    allfess : totalFess,
-    pandingFee : remingfees
+    classs: classfind.className,
+    allfess: totalFess,
+    pandingFee: remingfees,
+    exams,
   };
   res.status(200).json({
     success: true,
     alldata,
-  }); 
+  });
 }); 
+
+
+// const UserbyId1 = TryCatch(async (req, res, next) => {
+//   const { id } = req.params;
+//   const user = await User.findById(id);
+//   if (!user) {
+//     return next(new ErrorHandler("user not found", 404));
+//   }
+//  else if (user.role === "teacher" || user.role === "admin") {
+//    var alldata = {
+//      ...user.toObject(),
+//    };
+//    res.status(200).json({
+//      success: true,
+//      alldata,
+//    });
+//  }
+//  else if(user.role === "student"){
+//    // finding class
+//    const classId = user.classId;
+//    const classfind = await Userclass.findOne(classId);
+
+//    // finding fee
+//    const schoolId = req.user.schoolId;
+//    const classFees = await Fee.findOne({ schoolId, classId });
+
+//    // exam find
+//     // const searchQuery = {
+//     //   schoolId,
+//     //   classId,
+//     // };
+//     // // const FindingExam = await SchoolExam.findOne(searchQuery);
+//   // const exams = await SchoolExam.find(searchQuery);
+
+//   console.log("1")
+//    const totalFess = classFees.fees;
+//   console.log("2");
+
+//   //  const totalpaidfee =user.feesinstall1 + user.feesinstall2 + user.feesinstall3;
+
+//   //  const remingfees =  totalFess - totalpaidfee
+//    const alldata = {
+//      ...user.toObject(),
+//      classs: classfind.className,
+//     //  allfess: totalFess,
+//     //  pandingFee: remingfees,
+//     //  exam: exams,
+//    };
+//    res.status(200).json({
+//      success: true,
+//      alldata,
+//    });
+//  }
+
+//   // finding class
+//   const classid = user.classId;
+//   const classfind = await Userclass.findOne(classid);
+
+//   // finding fee
+//   const schoolId = req.user.schoolId;
+//   const classFees = await Fee.findOne({ schoolId, classId: classid });
+  
+// // exam find
+// //  const searchQuery = {
+// //     schoolId,
+// //     classId,
+// //   };
+// // const FindingExam  = await SchoolExam.find(searchQuery)
+// // console.log(FindingExam)
+
+//   // const totalFess = classFees.fees;
+//   // const totalpaidfee =
+//     // user.feesinstall1 + user.feesinstall2 + user.feesinstall3;
+
+
+//   // const remingfees =  totalFess - totalpaidfee
+//   // const alldata = {
+//     // ...user.toObject(),
+//     // classs : classfind.className,
+//     // allfess : totalFess,
+//     // pandingFee : remingfees
+//   // };
+//   // res.status(200).json({
+//   //   success: true,
+//   //   alldata,
+//   // }); 
+// }); 
 
 
 // get all use

@@ -32,7 +32,7 @@ const addTeacher = require("./Routes/Admin/AddTeacher");
 const Exam = require("./Routes/ExamRoutes/Exam")
 
 // teacher routes
-const addstudent = require("./Routes/Teacher/AddStudent");
+const addstudent = require("./Routes/Teacher/AddStudent"); 
 // 
 // routes
 const User = require("./Routes/User/user");

@@ -19,5 +19,5 @@ const TotalFees = new mongoose.Schema({
  
 
 });
-
+ 
 module.exports = mongoose.model("Fee", TotalFees);

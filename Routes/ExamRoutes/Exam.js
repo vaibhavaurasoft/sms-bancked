@@ -20,6 +20,9 @@ router
 router
   .route("/examdelete/:examId")
   .delete(auth.isAuthenticateUser, ExamController.deleteExamById);
+router
+  .route("/myexam")
+  .get(auth.isAuthenticateUser, ExamController.MyExam);
 
 
 module.exports = router;

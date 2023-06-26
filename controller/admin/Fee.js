@@ -44,7 +44,8 @@ const SeeAllFee = TryCatch(async (req, res) => {
     };
     const schoolcheck = await School.findById(schoolId)
     const data = await Fee.find(searchQuery);
-    res.status(200).json({ School: schoolcheck.schoolname, data });
+    const totalClass = data.length;
+    res.status(200).json({ School: schoolcheck.schoolname, TotalClass : totalClass,data });
   }
 });
 
@@ -66,7 +67,7 @@ const GetFeesByClassName = TryCatch(async (req, res) => {
   const data = existingClass.fees;
   res.status(200).json({
     success: true,
-    message: "School fees have been added",
+    message: "School fees fetch  succsfull",
     existingClass,
     fees: data,
   });
@@ -100,9 +101,30 @@ const UpdateFees = TryCatch(async (req, res) => {
   });
 });
 
+// my fees
+const MyFees = TryCatch(async (req, res) => {
+ const schoolId = req.user.schoolId;
+ const classId = req.user.classId;
+   const searchQuery = {
+     schoolId,
+     classId,
+   };
+  const existingClass = await Fee.find(searchQuery);
+
+
+  const data = existingClass.fees;
+  res.status(200).json({
+    success: true,
+    message: "School fees fetch  succsfull",
+    existingClass,
+    fees: data,
+  });
+});
+
 module.exports = {
   AddFees,
   SeeAllFee,
   UpdateFees,
   GetFeesByClassName,
+MyFees
 };

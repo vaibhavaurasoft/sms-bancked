@@ -34,7 +34,8 @@ const ExamSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default : "<upcoming></upcoming>"
+    enum: ["upcoming", "history"],
+    default: "upcoming",
   },
 });
 
