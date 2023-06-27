@@ -1,47 +1,46 @@
-const experss = require("express");
-const router = experss.Router();
-const auth = require("../../middelwear/Auth");
-const Data = require("../../controller/userController/User");
+const express = require("express");
+const router = express.Router();
+const auth = require("../../middleware/Auth");
+const Data = require("../../controller/UserController/User");
 
-// add admin
-router
-  .route("/addadmin")
-  .post(
-    auth.isAuthenticateUser,
-    auth.authorizeRole("superadmin"),
-    Data.AddUser
-  );
+// add an admin
+router.post(
+  "/addadmin",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("superadmin"),
+  Data.AddUser
+);
 
-// all admin
-router
-  .route("/alladmin")
-  .get(auth.isAuthenticateUser, auth.authorizeRole("superadmin"), Data.AllUser);
+// get all admins
+router.get(
+  "/alladmin",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("superadmin"),
+  Data.AllUser
+);
 
-// single admin
-router
-  .route("/singleadmin/:id")
-  .get(
-    auth.isAuthenticateUser,
-    auth.authorizeRole("superadmin"),
-    Data.UserbyId
-  );
+// get a single admin by ID
+router.get(
+  "/singleadmin/:id",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("superadmin"),
+  Data.UserbyId
+);
 
-// update admin
-router
-  .route("/updateadmin/:id")
-  .put(
-    auth.isAuthenticateUser,
-    auth.authorizeRole("superadmin"),
-    Data.UpdateUser
-  );
+// update an admin
+router.put(
+  "/updateadmin/:id",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("superadmin"),
+  Data.UpdateUser
+);
 
-// delete admin
-router
-  .route("/deleteadmin/:id")
-  .delete(
-    auth.isAuthenticateUser,
-    auth.authorizeRole("superadmin"),
-    Data.DeleteUser
-  );
+// delete an admin
+router.delete(
+  "/deleteadmin/:id",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("superadmin"),
+  Data.DeleteUser
+);
 
 module.exports = router;

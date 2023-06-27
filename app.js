@@ -1,15 +1,15 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const Error = require("./middelwear/error");
+const Error = require("./middleware/error");
 const multer = require("multer")
 
 
+//  middelwear
+ 
 
 
-
-
-
+ 
 // parse
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");

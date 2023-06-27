@@ -1,14 +1,21 @@
+// Import required modules
 const SchoolClass = require("../../model/SchoolClass/Schoolclass");
-const TryCatch = require("../../middelwear/TryCatch");
+const TryCatch = require("../../middleware/TryCatch");
 const ErrorHandler = require("../../utils/errorHandel");
 
-// crate class
+// Create a class
 const AddClass = TryCatch(async (req, res, next) => {
   const classname = await SchoolClass.create(req.body);
-  res.status(200).json({sucess : true,classname , message : "school class create succefull"})
+  res
+    .status(200)
+    .json({
+      success: true,
+      classname,
+      message: "School class created successfully",
+    });
 });
 
-// find class by id
+// Find class by ID
 const ClassDetails = TryCatch(async (req, res, next) => {
   const { classId } = req.params;
   if (!classId) {
@@ -16,20 +23,20 @@ const ClassDetails = TryCatch(async (req, res, next) => {
   }
   const classdetails = await SchoolClass.findById(classId);
   if (!classdetails) {
-    return new ErrorHandler("No School Available with this id", 400);
+    return new ErrorHandler("No School available with this ID", 400);
   }
-  res.status(200).json({ sucess: true, classdetails });
-})
+  res.status(200).json({ success: true, classdetails });
+});
 
-const AllClass = TryCatch(async(req,res,next)=>{
-    const query = req.query;
-    const AllClass = await SchoolClass.find(query)
-    const totalClass = await AllClass.length
-  res
-    .status(200)
-    .json({ sucess: true, AllClass ,  totalClass });
-})
+// Get all classes
+const AllClass = TryCatch(async (req, res, next) => {
+  const query = req.query;
+  const allClasses = await SchoolClass.find(query);
+  const totalClasses = allClasses.length;
+  res.status(200).json({ success: true, allClasses, totalClasses });
+});
 
+// Delete class by ID
 const DeleteClass = TryCatch(async (req, res, next) => {
   const { classId } = req.params;
 
@@ -55,10 +62,10 @@ const DeleteClass = TryCatch(async (req, res, next) => {
   });
 });
 
-
+// Export the modules
 module.exports = {
   AddClass,
   AllClass,
   ClassDetails,
-  DeleteClass
+  DeleteClass,
 };

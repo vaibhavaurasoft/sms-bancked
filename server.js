@@ -1,30 +1,31 @@
 const app = require("./app");
 const dotenv = require("dotenv");
 const Database = require("./config/database");
-// for config file
-require("dotenv").config();
+
+// Load environment variables
 dotenv.config({ path: "./config/config.env" });
-// databasr connection
+
+// Database connection
 Database();
 
-// server
+// Server
 const server = app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
 
-// unhadeling error which is not hedling by anywhere
+// Unhandled error
 process.on("uncaughtException", (err) => {
-  console.log(`Error:${err.message}`);
-  console.log(`sutting down the server due to uncaughtException`);
+  console.log(`Error: ${err.message}`);
+  console.log("Shutting down the server due to uncaught exception");
   server.close(() => {
     process.exit(1);
   });
 });
 
-// unhadel promise
+// Unhandled promise rejection
 process.on("unhandledRejection", (err) => {
-  console.log(`Error : ${err.message}`);
-  console.log(`sutting down the server due to unhandele proimis rejection`);
+  console.log(`Error: ${err.message}`);
+  console.log("Shutting down the server due to unhandled promise rejection");
   server.close(() => {
     process.exit(1);
   });

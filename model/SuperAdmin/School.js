@@ -6,7 +6,7 @@ const validator = require("validator");
 const RegisterSchool = new mongoose.Schema({
   // owner
   ownername: {
-    type: String,
+    type: String, 
   },
   ownerimage: [
     {

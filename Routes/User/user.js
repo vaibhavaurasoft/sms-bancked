@@ -1,31 +1,37 @@
-const experss = require("express");
-const router = experss.Router();
-const User = require("../../controller/userController/User");
-const auth = require("../../middelwear/Auth");
+const express = require("express");
+const router = express.Router();
+const User = require("../../controller/UserController/User");
+const auth = require("../../middleware/Auth");
 
-// route for super Admin
-router.route("/register").post(User.AddUser);
-router.route("/login").post(User.UserLogin);
-router
-  .route("/userbyId/:id")
-  .get(
-    auth.isAuthenticateUser,
-    auth.authorizeRole("superadmin"),
-    User.UserbyId
-  );
-router
-  .route("/Alluser")
-  .get(auth.isAuthenticateUser, auth.authorizeRole("superadmin"), User.AllUser);
+// Routes for super admin
 
-// logout
-router
-  .route("/logout")
-  .post(auth.isAuthenticateUser, User.LogOut);
+// register a new user
+router.post("/register", User.AddUser);
 
-// user Details
-router.route("/me").get(auth.isAuthenticateUser, User.UserDetails);
+// login
+router.post("/login", User.UserLogin);
 
-// role check
-// router.route("/role").get(auth.isAuthenticateUser,User.RoleCheck)
+// get a user by ID
+router.get(
+  "/userbyId/:id",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("superadmin"),
+  User.UserbyId
+);
+
+// get all users
+router.get(
+  "/Alluser",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("superadmin"),
+  User.AllUser
+);
+
+// Route for user logout
+router.post("/logout", auth.isAuthenticateUser, User.LogOut);
+
+// get user details
+router.get("/me", auth.isAuthenticateUser, User.UserDetails);
+
 
 module.exports = router;

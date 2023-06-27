@@ -2,16 +2,21 @@ const TryCatch = require("./TryCatch");
 const jwt = require("jsonwebtoken");
 const User = require("../model/User/User");
 
+// Middleware to check if the user is authenticated
 const isAuthenticateUser = TryCatch(async (req, res, next) => {
-
   const { token } = req.cookies;
+
+  // Check if token exists
   if (!token) {
     return res
-      .status(404)
-      .json({ failed: "Please login to access this fecility" });
+      .status(404) 
+      .json({ failed: "Please login to access this facility" });
   }
 
+  // Verify and decode token
   const decodeData = jwt.verify(token, process.env.JWT_SECRET);
+
+  // Find user based on decoded data
   req.user = await User.findById(decodeData.id);
   next();
 });
@@ -29,13 +34,14 @@ const isAuthenticateUser = TryCatch(async (req, res, next) => {
 //   next();
 // });
 
-// auth rise role
+// Middleware to authorize user roles
 const authorizeRole = (...roles) => {
   return (req, res, next) => {
+    // Check if user role is included in the allowed roles
     if (!roles.includes(req.user.role)) {
       return next(
         res.json({
-          failed: `Role : ${req.user.role} is not allowed to access this resouces`,
+          failed: `Role : ${req.user.role} is not allowed to access this resource`,
         })
       );
     }

@@ -1,10 +1,10 @@
-const Fee = require("../../model/admin/Fee");
-const TryCatch = require("../../middelwear/TryCatch");
-const ErrorHandler = require("../../utils/errorHandel");
-const SchoolClass = require("../../model/SchoolClass/Schoolclass");
-const School = require("../../model/SuperAdmin/SchoolSchema");
+const Fee = require("../../model/admin/Fee"); // Fee model
+const TryCatch = require("../../middleware/TryCatch"); // TryCatch middleware
+const ErrorHandler = require("../../utils/errorHandel"); // ErrorHandler utility
+const SchoolClass = require("../../model/SchoolClass/Schoolclass"); // SchoolClass model
+const School = require("../../model/SuperAdmin/School"); // School model
 
-// add fess
+// add fees
 const AddFees = TryCatch(async (req, res) => {
   const schoolId = req.user.schoolId;
   const { classId, fees } = req.body;
@@ -16,7 +16,7 @@ const AddFees = TryCatch(async (req, res) => {
   if (existingClass) {
     return res.status(400).json({
       success: false,
-      message: `Class ${findClass.className} already exists for the school pleae update class fee`,
+      message: `Class ${findClass.className} already exists for the school please update class fee`,
     });
   }
 
@@ -30,11 +30,11 @@ const AddFees = TryCatch(async (req, res) => {
   });
 });
 
-// see all fess
+// see all fees
 const SeeAllFee = TryCatch(async (req, res) => {
   if (req.user.role == "superadmin") {
-    const schoolFess = await Fee.find();
-    res.json({ success: true, schoolFess });
+    const schoolFees = await Fee.find();
+    res.json({ success: true, schoolFees });
   }
   // admin
   else if (req.user.role === "admin" || req.user.role === "teacher") {
@@ -57,7 +57,7 @@ const GetFeesByClassName = TryCatch(async (req, res) => {
   const { id } = req.params;
   console.log(id);
 
-  const existingClass = await Fee.findOne({ schoolId, classId: id }); // Use 'id' instead of 'classId'
+  const existingClass = await Fee.findOne({ schoolId, classId: id });
 
   if (!existingClass) {
     return res.status(404).json({
@@ -69,7 +69,7 @@ const GetFeesByClassName = TryCatch(async (req, res) => {
   const data = existingClass.fees;
   res.status(200).json({
     success: true,
-    message: "School fees fetch  succsfull",
+    message: "School fees fetch successful",
     existingClass,
     fees: data,
   });
@@ -104,22 +104,21 @@ const UpdateFees = TryCatch(async (req, res) => {
 });
 
 // my school Fees
-const MySchholFees = TryCatch(async (req, res) => {
+const MySchoolFees = TryCatch(async (req, res) => {
   const schoolId = req.user.schoolId;
   const searchQuery = {
     schoolId,
   };
   const existingClass = await Fee.findOne(searchQuery);
 
-  const alldata = {
+  const allData = {
     existingClass,
   };
 
   res.status(200).json({
-   alldata
+    allData,
   });
 });
-
 
 // my fees
 const MyFees = TryCatch(async (req, res) => {
@@ -135,21 +134,21 @@ const MyFees = TryCatch(async (req, res) => {
   const install2 = req.user.feesinstall2;
   const install3 = req.user.feesinstall3;
 
-  const totalpaidfee =
+  const totalPaidFee =
     req.user.feesinstall1 + req.user.feesinstall2 + req.user.feesinstall3;
-  const remingfees = TotalFees - totalpaidfee;
+  const remainingFees = TotalFees - totalPaidFee;
 
-  const alldata = {
+  const allData = {
     TotalFees,
     install1,
     install2,
     install3,
-    remingfees,
-    totalpaidfee,
+    remainingFees,
+    totalPaidFee,
   };
 
   res.status(200).json({
-   alldata
+    allData,
   });
 });
 
@@ -159,5 +158,5 @@ module.exports = {
   UpdateFees,
   GetFeesByClassName,
   MyFees,
-  MySchholFees,
+  MySchoolFees,
 };

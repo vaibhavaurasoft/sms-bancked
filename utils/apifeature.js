@@ -1,36 +1,46 @@
+// This class provides API features for query manipulation
+
 class ApiFeatures {
   constructor(query, queryStr) {
-    this.query = query; // User.find()
-    this.queryStr = queryStr; //nama=""
+    this.query = query; // Query to be executed
+    this.queryStr = queryStr; // Query parameters
   }
 
   search() {
-    const schoolname = this.queryStr.schoolname
-      ? {
-          schoolname: {
-            $regex: this.queryStr.schoolname,
-            $options: "i",
-          },
-          role: {
-            $regex: this.queryStr.role,
-            $options: "i",
-          },
-          name: {
-            $regex: this.queryStr.name,
-            $options: "i",
-          },
-        }
-      : {};
+    const { schoolname, role, name } = this.queryStr;
 
-    this.query = this.query.find({ ...schoolname });
+    if (schoolname || role || name) {
+      const searchQuery = {};
+
+      if (schoolname) {
+        searchQuery.schoolname = {
+          $regex: schoolname,
+          $options: "i",
+        };
+      }
+
+      if (role) {
+        searchQuery.role = {
+          $regex: role,
+          $options: "i",
+        };
+      }
+
+      if (name) {
+        searchQuery.name = {
+          $regex: name,
+          $options: "i",
+        };
+      }
+
+      this.query = this.query.find(searchQuery);
+    }
+
     return this;
   }
 
-
-
   pagination(resultPerPage) {
-    const currentPage = Number(this.queryStr.page) || 1;
-
+    const currentPage = parseInt(this.queryStr.page, 10) || 1;
     const skip = resultPerPage * (currentPage - 1);
 
     this.query = this.query.limit(resultPerPage).skip(skip);

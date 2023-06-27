@@ -1,40 +1,46 @@
-const experss = require("express");
-const router = experss.Router();
-const auth = require("../../middelwear/Auth");
-// const TeacherData = require("../../controller/admin/addteacher");
-const Data = require("../../controller/userController/User")
+const express = require("express");
+const router = express.Router();
+const auth = require("../../middleware/Auth");
+const Data = require("../../controller/UserController/User");
 
-// add teacher
-router
-  .route("/addteacher")
-  .post(auth.isAuthenticateUser, auth.authorizeRole("admin"), Data.AddUser);
- 
-// all teacher
-router.route("/allteacher").get(
-    auth.isAuthenticateUser,
-    auth.authorizeRole("admin"),
-    Data.AllUser
-)
+// add a teacher
+router.post(
+  "/addteacher",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("admin"),
+  Data.AddUser
+);
 
-// single teacher
-router.route("/singleteacher/:id").get(
-    auth.isAuthenticateUser,
-    auth.authorizeRole("admin"),
-    Data.UserbyId
-)
+// get all teachers
+router.get(
+  "/allteacher",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("admin"),
+  Data.AllUser
+);
 
-// update teacher
-router.route("/updateteacher/:id").put(
-    auth.isAuthenticateUser,
-    auth.authorizeRole("admin"),
-    Data.UpdateUser
-)
+// get a single teacher by ID
+router.get(
+  "/singleteacher/:id",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("admin"),
+  Data.UserbyId
+);
 
-// delete teacher
-router.route("/deleteteacher/:id").delete(
-    auth.isAuthenticateUser,
-    auth.authorizeRole("admin"),
-    Data.DeleteUser
-)
+// update a teacher
+router.put(
+  "/updateteacher/:id",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("admin"),
+  Data.UpdateUser
+);
 
-module.exports = router
+// delete a teacher
+router.delete(
+  "/deleteteacher/:id",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("admin"),
+  Data.DeleteUser
+);
+
+module.exports = router;

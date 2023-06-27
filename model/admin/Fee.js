@@ -15,9 +15,6 @@ const TotalFees = new mongoose.Schema({
     type: Number,
     required: [true, "please enter fees"],
   },
-
- 
-
 });
- 
+
 module.exports = mongoose.model("Fee", TotalFees);

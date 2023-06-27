@@ -1,15 +1,17 @@
-const TryCatch = require("../../middelwear/TryCatch");
-const School = require("../../model/SuperAdmin/SchoolSchema");
+
+// Import required modules
+const TryCatch = require("../../middleware/TryCatch");
+const School = require("../../model/SuperAdmin/School");
 const ErrorHandler = require("../../utils/errorHandel");
-// const ApiFeatures = require("../../utils/apifeature");
 const User = require("../../model/User/User");
 const checkPostBody = require("../../utils/QueryCheck");
-const SchoolClass = require("../../model/SchoolClass/Schoolclass")
-const Fee = require("../../model/admin/Fee")
-const SchoolExame = require("../../model/ExamSchema/exammodel")
+const SchoolClass = require("../../model/SchoolClass/Schoolclass");
+const Fee = require("../../model/admin/Fee");
+const SchoolExame = require("../../model/ExamSchema/exammodel");
 
-// crate school
+// Create school
 const AddSchool2 = TryCatch(async (req, res) => {
+  // Extract data from request body
   const {
     ownername,
     ownerimage,
@@ -42,6 +44,7 @@ const AddSchool2 = TryCatch(async (req, res) => {
     totalteacher,
   } = req.body;
 
+  // Create a new school
   const newSchool = await School.create({
     ownername: ownername || "Ankur",
     ownerimage: ownerimage || [],
@@ -76,18 +79,21 @@ const AddSchool2 = TryCatch(async (req, res) => {
   res.json({ message: "School added successfully", school: newSchool });
 });
 
-
-// add school and admin same time
+// Add school and admin at the same time
 const AddSchool = TryCatch(async (req, res, next) => {
+  // Check required fields in the request body
   await checkPostBody(
     ["schoolname", "name", "email", "password", "address", "city"],
     req
   );
+  
+  // Extract data from request body
   const { schoolname, email, name, password, address, city } = req.body;
 
-
+  // Create a new school
   const school = await School.create({ schoolname, address, city });
 
+  // Create a new admin user associated with the school
   const Admin = await User.create({
     name,
     email,
@@ -95,89 +101,33 @@ const AddSchool = TryCatch(async (req, res, next) => {
     password,
     schoolId: school._id,
   });
-  res.json({ message: "Accound created succesfull", school, Admin });
+  
+  res.json({ message: "Account created successfully", school, Admin });
 });
 
-
-// 23 jun
-
-// const AllSchool = TryCatch(async (req, res, next) => {
-//   const query = req.query;
-//   const SchoolList = await School.find(query);
-
-//   const schoolsWithCounts = await Promise.all(
-//     SchoolList.map(async (school) => {
-//       // total teacher
-//       const totalTeacher = await User.countDocuments({
-//         schoolId: school._id,
-//         role: "teacher",
-//       });
-//       // total student
-//       const totalStudent = await User.countDocuments({
-//         schoolId: school._id,
-//         role: "student",
-//       });
-//       // total admin
-//       const totalAdmin = await User.countDocuments({
-//         schoolId: school._id,
-//         role: "admin",
-//       });
-
-//       // total user
-//       const totalUser = await User.countDocuments({
-//         schoolId: school._id,
-//       });
-
-//       return {
-//         ...school.toObject(),
-//         totalStudent,
-//         totalTeacher,
-//         totalAdmin,
-//         totalUser,
-//       };
-//     })
-//   );
-
-//   const totalSchool = schoolsWithCounts.length;
-//   const finalData = schoolsWithCounts.reverse();
-//   const totalUser = await User.countDocuments();
-//   const totalStudent = await User.find({role:"student"}).countDocuments();
-//   const totalTeacher = await User.find({ role: "tacher" }).countDocuments();
-//   const totalSuperAdmin = await User.find({ role: "superadmin" }).countDocuments();
-//   res.status(200).json({
-//     totalSchool,
-//     totalTeacher,
-//     totalSuperAdmin,
-//     totalUser,
-//     totalStudent,
-//     SchoolList: finalData,
-//   });
-// });
-
+// Get all schools with counts
 const AllSchool = TryCatch(async (req, res, next) => {
   const query = req.query;
   const SchoolList = await School.find(query);
 
-
   const schoolsWithCounts = await Promise.all(
     SchoolList.map(async (school) => {
-      // total teacher
+      // Total teacher count
       const totalTeacher = await User.countDocuments({
         schoolId: school._id,
         role: "teacher",
       });
-      // total student
+      // Total student count
       const totalStudent = await User.countDocuments({
         schoolId: school._id,
         role: "student",
       });
-      // total admin
+      // Total admin count
       const totalAdmin = await User.countDocuments({
         schoolId: school._id,
         role: "admin",
       });
-
-      // total user
+      // Total user count
       const totalUser = await User.countDocuments({
         schoolId: school._id,
       });
@@ -196,10 +146,9 @@ const AllSchool = TryCatch(async (req, res, next) => {
   const finalData = schoolsWithCounts.reverse();
   const totalUser = await User.countDocuments();
   const totalStudent = await User.find({ role: "student" }).countDocuments();
-  const totalTeacher = await User.find({ role: "tacher" }).countDocuments();
-  const totalSuperAdmin = await User.find({
-    role: "superadmin",
-  }).countDocuments();
+  const totalTeacher = await User.find({ role: "teacher" }).countDocuments();
+  const totalSuperAdmin = await User.find({ role: "superadmin" }).countDocuments();
+  
   res.status(200).json({
     totalSchool,
     totalTeacher,
@@ -210,11 +159,7 @@ const AllSchool = TryCatch(async (req, res, next) => {
   });
 });
 
-
-
-
-
-// get school by id
+// Get school details by ID
 const SchoolDetails = TryCatch(async (req, res, next) => {
   const { schoolId } = req.params;
   if (!schoolId) {
@@ -226,16 +171,16 @@ const SchoolDetails = TryCatch(async (req, res, next) => {
     return new ErrorHandler("No School Available with this id", 400);
   }
 
-  // finding Exam
-  const exams = await SchoolExame.find({schoolId});
+  // Find exams for the school
+  const exams = await SchoolExame.find({ schoolId });
 
-  // finding total fees 
-  const fees = await Fee.find({schoolId})
+  // Find total fees for the school
+  const fees = await Fee.find({ schoolId });
 
-  // finding total class
+  // Find total classes for the school
   const totalClass = await Fee.countDocuments({ schoolId });
 
-  // finding totoal user
+  // Find total users for the school
   const totalTeacher = await User.countDocuments({
     schoolId: schooldetails._id,
     role: "teacher",
@@ -255,55 +200,52 @@ const SchoolDetails = TryCatch(async (req, res, next) => {
     schoolId: schooldetails._id,
   });
 
-
   const schoolWithCounts = {
     ...schooldetails.toObject(),
     totalStudent,
     totalTeacher,
     totalAdmin,
     totalUser,
-    totalclass : totalClass,
-    classes:fees,
-    exams
+    totalclass: totalClass,
+    classes: fees,
+    exams,
   };
 
   res.json({ success: "School details fetched successfully", School: schoolWithCounts });
 });
 
-
-// update Data in  School
+// Update school details
 const UpdateSchoolDetails = TryCatch(async (req, res) => {
   const { schoolId } = req.params;
   if (!schoolId) {
-    return new ErrorHandler("please provid SchoolId", 400);
+    return new ErrorHandler("Please provide SchoolId", 400);
   }
-  var school = await School.findById(schoolId);
+  const school = await School.findById(schoolId);
   if (!school) {
-    return new ErrorHandler("No School Avalible with this id", 400);
+    return new ErrorHandler("No School Available with this id", 400);
   }
 
-  // update data
-  var school = await School.findByIdAndUpdate(
+  // Update data
+  const updatedSchool = await School.findByIdAndUpdate(
     schoolId,
     { $set: req.body },
     { new: true }
   );
-  res.json({ sucess: "succes details update succesfull", school });
+  res.json({ success: "School details updated successfully", school: updatedSchool });
 });
 
-// delete school
+// Delete school
 const DeleteSchool = TryCatch(async (req, res, next) => {
   const { schoolId } = req.params;
   if (!schoolId) {
-    return res.json({ error: "No School Avalible with this id" });
+    return res.json({ error: "Please provide SchoolId" });
   }
   const school = await School.findByIdAndDelete(schoolId);
   if (!school) {
-    return res.json({ error: "No School Avalible with this id" });
+    return res.json({ error: "No School Available with this id" });
   }
-  res.json({ sucess: "succes details delete succesfull", school });
+  res.json({ success: "School details deleted successfully", school });
 });
-
 
 module.exports = {
   AddSchool,
@@ -312,3 +254,4 @@ module.exports = {
   UpdateSchoolDetails,
   DeleteSchool,
 };
+ 

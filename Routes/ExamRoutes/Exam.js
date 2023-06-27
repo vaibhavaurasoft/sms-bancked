@@ -1,31 +1,53 @@
 const express = require("express");
 const router = express.Router();
-const ExamController = require("../../controller/ExamController/exam")
-const auth = require("../../middelwear/Auth")
+const ExamController = require("../../controller/Examcontroller/exam");
+const auth = require("../../middleware/Auth");
 
 // Routes for exams
-router.route("/addexam").post( auth.isAuthenticateUser, ExamController.createExam);
-router
-  .route("/allexams")
-  .get(auth.isAuthenticateUser, ExamController.ALLSchoolExam);
-router
-  .route("/allexams/:classId")
-  .get(auth.isAuthenticateUser, ExamController.getAllExamsByClass);
-router
-  .route("/examdetails/:examId")
-  .get(auth.isAuthenticateUser, ExamController.getExamById);
-router
-  .route("/examupdate/:examId")
-  .put(auth.isAuthenticateUser, ExamController.updateExamById);
-router
-  .route("/examdelete/:examId")
-  .delete(auth.isAuthenticateUser, ExamController.deleteExamById);
-router
-  .route("/myexam")
-  .get(auth.isAuthenticateUser, ExamController.MyExam);
-  router
-  .route("/myschoolexam")
-  .get(auth.isAuthenticateUser,auth.authorizeRole("admin","teacher") ,ExamController.MySchoolsExam);
 
+//create an exam
+router.post("/addexam", auth.isAuthenticateUser, ExamController.createExam);
+
+//get all exams
+router.get("/allexams", auth.isAuthenticateUser, ExamController.getAllExams);
+
+//get all exams by class ID
+router.get(
+  "/allexams/:classId",
+  auth.isAuthenticateUser,
+  ExamController.getAllExamsByClass
+);
+
+//get exam details by exam ID
+router.get(
+  "/examdetails/:examId",
+  auth.isAuthenticateUser,
+  ExamController.getExamById
+);
+
+//update an exam by exam ID
+router.put(
+  "/examupdate/:examId",
+  auth.isAuthenticateUser,
+  ExamController.updateExamById
+);
+
+//delete an exam by exam ID
+router.delete(
+  "/examdelete/:examId",
+  auth.isAuthenticateUser,
+  ExamController.deleteExamById
+);
+
+//get my exams (for students)
+router.get("/myexam", auth.isAuthenticateUser, ExamController.MyExams);
+
+//get my school exams (for admin and teacher)
+router.get(
+  "/myschoolexam",
+  auth.isAuthenticateUser,
+  auth.authorizeRole("admin", "teacher"),
+  ExamController.MySchoolExams
+);
 
 module.exports = router;
