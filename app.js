@@ -21,10 +21,13 @@ const SchoolClass = require("./Routes/schoolClass/schoolclass.js")
 // const Fees = require("./Routes/collection/totalFee")
 const Fees = require("./Routes/Admin/Fees")
 
-// superadmin routes
+// admin panel
+const AdminPanel = require("./Routes/Adminpanel/AdminPanel");
+
+
+// superadmin routes 
 const School = require("./Routes/SuperAdmin/Schoolroute");
 const addadmin = require("./Routes/SuperAdmin/Adminroute");
-const AdminPanel = require("./Routes/SuperAdmin/AdminPanel");
 
 
 // admin routes 
